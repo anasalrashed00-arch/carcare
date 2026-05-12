@@ -1,165 +1,219 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<style>
-:root {
-  --primary: #2563eb;
-  --bg-site: #f1f5f9;
-  --sidebar-bg: #1e293b;
-  --card-bg: #ffffff;
-  --text-main: #334155;
-  --accent: #10b981;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة صياناتي - Dashboard</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg-site: #f1f5f9;
+            --sidebar-bg: #1e293b;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --accent: #10b981;
+        }
 
-body {
-  margin: 0; padding: 0;
-  background-color: var(--bg-site);
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  display: flex; height: 100vh;
-}
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-site);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            display: flex; height: 100vh;
+        }
 
-/* Sidebar */
-.sidebar {
-  width: 260px; background: var(--sidebar-bg);
-  color: white; display: flex; flex-direction: column; padding: 20px 0;
-}
+        /* Sidebar */
+        .sidebar {
+            width: 260px; background: var(--sidebar-bg);
+            color: white; display: flex; flex-direction: column; padding: 20px 0;
+            flex-shrink: 0;
+        }
 
-.sidebar h2 { text-align: center; color: #38bdf8; margin-bottom: 30px; }
+        .sidebar h2 { text-align: center; color: #38bdf8; margin-bottom: 30px; font-size: 24px; }
 
-.nav-item {
-  padding: 15px 25px; cursor: pointer; transition: 0.3s;
-  display: flex; align-items: center; gap: 12px;
-  border-right: 4px solid transparent;
-}
+        .nav-item {
+            padding: 15px 25px; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 12px;
+            border-right: 4px solid transparent;
+        }
 
-.nav-item:hover { background: #334155; }
-.nav-item.active {
-  background: #334155; border-right: 4px solid var(--primary); color: #38bdf8;
-}
+        .nav-item:hover { background: #334155; }
+        .nav-item.active {
+            background: #334155; border-right: 4px solid var(--primary); color: #38bdf8;
+        }
 
-/* Main Area */
-.main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        /* Main Area */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
 
-.form-container {
-  background: var(--card-bg); padding: 30px;
-  border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  max-width: 900px; margin: 0 auto;
-}
+        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 
-.grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.full-width { grid-column: span 2; }
+        .form-container {
+            background: var(--card-bg); padding: 30px;
+            border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 900px; margin: 0 auto;
+        }
 
-.section-title {
-  grid-column: span 2; font-size: 18px; font-weight: bold;
-  color: var(--primary); margin: 20px 0 10px;
-  padding-bottom: 5px; border-bottom: 2px solid #e2e8f0;
-}
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
 
-.input-group { display: flex; flex-direction: column; gap: 8px; }
-label { font-size: 14px; font-weight: 600; color: #64748b; }
-input, select {
-  padding: 12px; border: 1px solid #cbd5e1;
-  border-radius: 8px; font-size: 15px; background: #f8fafc;
-}
+        .section-title {
+            grid-column: span 2; font-size: 18px; font-weight: bold;
+            color: var(--primary); margin: 20px 0 10px;
+            padding-bottom: 5px; border-bottom: 2px solid #e2e8f0;
+        }
 
-.btn-save {
-  background: var(--primary); color: white; padding: 15px;
-  border: none; border-radius: 8px; font-weight: bold;
-  cursor: pointer; margin-top: 20px; width: 100%;
-}
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 14px; font-weight: 600; color: #64748b; }
+        input {
+            padding: 12px; border: 1px solid #cbd5e1;
+            border-radius: 8px; font-size: 15px; background: #f8fafc;
+        }
 
-/* Stats Styling */
-.stat-box {
-  background: #f8fafc; padding: 20px; border-radius: 10px;
-  text-align: center; border: 1px solid #e2e8f0;
-}
-</style>
+        .btn-save {
+            background: var(--primary); color: white; padding: 15px;
+            border: none; border-radius: 8px; font-weight: bold;
+            cursor: pointer; margin-top: 20px; width: 100%; transition: 0.3s;
+        }
+        .btn-save:hover { background: #1d4ed8; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: right; }
+        th { background: #f8fafc; color: #64748b; }
+
+        .stat-box {
+            background: #f8fafc; padding: 20px; border-radius: 10px;
+            text-align: center; border: 1px solid #e2e8f0;
+        }
+    </style>
 </head>
 <body>
 
 <aside class="sidebar">
-  <h2>إدارة سياراتي</h2>
-  <div class="nav-item" onclick="showTab('p1', this)"><span>🚗</span> المركبة</div>
-  <div class="nav-item active" onclick="showTab('p2', this)"><span>🔧</span> إضافة صيانة</div>
-  <div class="nav-item" onclick="showTab('p3', this)"><span>📍</span> العداد</div>
-  <div class="nav-item" onclick="showTab('p4', this)"><span>📊</span> إحصائيات</div>
-  <div class="nav-item" onclick="showTab('p5', this)"><span>🗂️</span> السجل</div>
+    <h2>إدارة سياراتي</h2>
+    <div class="nav-item" id="btn-p1" onclick="showTab('p1')"><span>🚗</span> المركبة</div>
+    <div class="nav-item active" id="btn-p2" onclick="showTab('p2')"><span>🔧</span> إضافة صيانة</div>
+    <div class="nav-item" id="btn-p3" onclick="showTab('p3')"><span>📍</span> العداد</div>
+    <div class="nav-item" id="btn-p4" onclick="showTab('p4')"><span>📊</span> إحصائيات</div>
+    <div class="nav-item" id="btn-p5" onclick="showTab('p5')"><span>🗂️</span> السجل</div>
 </aside>
 
 <main class="main-content">
-  <h1 id="view-title">إضافة صيانة جديدة</h1>
-  <div id="content-area" class="form-container">
+    <div class="header-bar">
+        <h1 id="view-title">إضافة صيانة جديدة</h1>
+    </div>
+    <div id="content-area" class="form-container">
+        <!-- المحتوى يتغير بالـ JavaScript -->
     </div>
 </main>
 
 <script>
-const contentArea = document.getElementById('content-area');
-const viewTitle = document.getElementById('view-title');
+    // جلب البيانات المخزنة عند تحميل الموقع
+    let carData = JSON.parse(localStorage.getItem('carProfile')) || { type: '', model: '', year: '', plate: '' };
+    let maintenanceLogs = JSON.parse(localStorage.getItem('maintenanceLogs')) || [];
+    let odometerLogs = JSON.parse(localStorage.getItem('odometerLogs')) || [];
 
-function showTab(tabId, element) {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    element.classList.add('active');
+    function showTab(tabId) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById('btn-' + tabId).classList.add('active');
+        const area = document.getElementById('content-area');
+        const title = document.getElementById('view-title');
 
-    if(tabId === 'p1') {
-        viewTitle.innerText = "بيانات المركبة";
-        contentArea.innerHTML = `
-            <div class="grid-inputs">
-                <div class="section-title">معلومات السيارة الأساسية</div>
-                <div class="input-group"><label>نوع المركبة</label><input type="text" placeholder="مثلاً: لكزس"></div>
-                <div class="input-group"><label>الموديل</label><input type="text" placeholder="مثلاً: LS 500"></div>
-                <div class="input-group"><label>سنة الصنع</label><input type="number" placeholder="2025"></div>
-                <div class="input-group"><label>رقم اللوحة</label><input type="text" placeholder="أ ب ج 123"></div>
-                <button class="btn-save">حفظ بيانات المركبة</button>
-            </div>`;
-    } 
-    else if(tabId === 'p2') {
-        viewTitle.innerText = "إضافة صيانة جديدة";
-        contentArea.innerHTML = `
-            <div class="grid-inputs">
-                <div class="section-title">تفاصيل الصيانة الحالية</div>
-                <div class="input-group"><label>نوع الصيانة</label><input type="text" placeholder="مثلاً: تغيير زيت"></div>
-                <div class="input-group"><label>المبلغ المدفوع</label><input type="number" placeholder="0.00"></div>
-                <div class="input-group"><label>الممشى الحالي</label><input type="number" placeholder="كم"></div>
-                <div class="input-group"><label>التاريخ</label><input type="date"></div>
-                <div class="section-title">المرفقات</div>
-                <div class="full-width"><input type="file" class="full-width"></div>
-                <button class="btn-save">حفظ السجل</button>
-            </div>`;
-    }
-    else if(tabId === 'p3') {
-        viewTitle.innerText = "تسجيل قراءة العداد";
-        contentArea.innerHTML = `
-            <div class="grid-inputs">
-                <div class="section-title">تتبع المسافة المقطوعة</div>
-                <div class="input-group"><label>القراءة الحالية للعداد</label><input type="number" placeholder="أدخل الرقم الظاهر في الطبلون"></div>
-                <div class="input-group"><label>ملاحظات</label><input type="text" placeholder="مشوار سفر، عمل، إلخ"></div>
-                <button class="btn-save">تحديث العداد</button>
-            </div>`;
-    }
-    else if(tabId === 'p4') {
-        viewTitle.innerText = "إحصائيات المصاريف";
-        contentArea.innerHTML = `
-            <div class="grid-inputs">
-                <div class="stat-box"><h3>إجمالي التكاليف</h3><p style="font-size:24px; color:var(--primary);">0.00 ريال</p></div>
-                <div class="stat-box"><h3>عدد الصيانات</h3><p style="font-size:24px; color:var(--accent);">0</p></div>
-                <div class="full-width" style="height:200px; background:#f1f5f9; border-radius:10px; display:flex; align-items:center; justify-content:center;">رسم بياني توضيحي سيظهر هنا</div>
-            </div>`;
-    }
-    else if(tabId === 'p5') {
-        viewTitle.innerText = "سجل العمليات السابقة";
-        contentArea.innerHTML = `
-            <div class="full-width">
-                <table style="width:100%; border-collapse: collapse;">
-                    <thead><tr style="background:#f8fafc;"><th style="padding:10px; border-bottom:2px solid #eee;">التاريخ</th><th style="padding:10px; border-bottom:2px solid #eee;">نوع الصيانة</th><th style="padding:10px; border-bottom:2px solid #eee;">التكلفة</th></tr></thead>
-                    <tbody><tr><td colspan="3" style="text-align:center; padding:20px; color:#94a3b8;">لا توجد سجلات مضافة بعد</td></tr></tbody>
+        if(tabId === 'p1') {
+            title.innerText = "بيانات المركبة (إدخال يدوي)";
+            area.innerHTML = `
+                <div class="grid-inputs">
+                    <div class="input-group"><label>نوع المركبة</label><input type="text" id="v_type" value="${carData.type}"></div>
+                    <div class="input-group"><label>موديل المركبة</label><input type="text" id="v_model" value="${carData.model}"></div>
+                    <div class="input-group"><label>سنة الصنع</label><input type="number" id="v_year" value="${carData.year}"></div>
+                    <div class="input-group"><label>رقم اللوحة</label><input type="text" id="v_plate" value="${carData.plate}"></div>
+                    <button class="btn-save" onclick="saveVehicle()">حفظ بيانات السيارة</button>
+                </div>`;
+        } 
+        else if(tabId === 'p2') {
+            title.innerText = "إضافة صيانة جديدة";
+            area.innerHTML = `
+                <div class="grid-inputs">
+                    <div class="section-title">تفاصيل الصيانة</div>
+                    <div class="input-group"><label>نوع الصيانة</label><input type="text" id="m_type" placeholder="مثلاً: زيت"></div>
+                    <div class="input-group"><label>المبلغ (ريال)</label><input type="number" id="m_price"></div>
+                    <div class="input-group"><label>الممشى الحالي</label><input type="number" id="m_km"></div>
+                    <div class="input-group"><label>التاريخ</label><input type="date" id="m_date"></div>
+                    <div class="full-width"><label>المرفقات</label><input type="file"></div>
+                    <button class="btn-save" onclick="saveMaintenance()">حفظ في السجل</button>
+                </div>`;
+            document.getElementById('m_date').valueAsDate = new Date();
+        }
+        else if(tabId === 'p3') {
+            title.innerText = "تسجيل قراءة العداد";
+            area.innerHTML = `
+                <div class="grid-inputs">
+                    <div class="input-group"><label>القراءة الحالية</label><input type="number" id="odo_val"></div>
+                    <div class="input-group"><label>ملاحظات</label><input type="text" id="odo_note"></div>
+                    <button class="btn-save" onclick="saveOdometer()">تحديث العداد</button>
+                </div>`;
+        }
+        else if(tabId === 'p4') {
+            title.innerText = "إحصائيات";
+            let total = maintenanceLogs.reduce((sum, item) => sum + parseFloat(item.price || 0), 0);
+            area.innerHTML = `
+                <div class="grid-inputs">
+                    <div class="stat-box"><h3>إجمالي التكاليف</h3><p style="font-size:24px; color:var(--primary); font-weight:bold;">${total} ريال</p></div>
+                    <div class="stat-box"><h3>عدد العمليات</h3><p style="font-size:24px; color:var(--accent); font-weight:bold;">${maintenanceLogs.length}</p></div>
+                </div>`;
+        }
+        else if(tabId === 'p5') {
+            title.innerText = "سجل الصيانة";
+            let rows = maintenanceLogs.map(item => `<tr><td>${item.date}</td><td>${item.type}</td><td>${item.km} كم</td><td>${item.price} ريال</td></tr>`).reverse().join('');
+            area.innerHTML = `
+                <table>
+                    <thead><tr><th>التاريخ</th><th>النوع</th><th>الممشى</th><th>السعر</th></tr></thead>
+                    <tbody>${rows || '<tr><td colspan="4" style="text-align:center;">لا توجد سجلات</td></tr>'}</tbody>
                 </table>
-            </div>`;
+                ${maintenanceLogs.length > 0 ? '<button onclick="clearLogs()" style="background:#e74c3c; color:white; border:none; padding:10px; margin-top:20px; border-radius:5px; cursor:pointer;">مسح السجل</button>' : ''}`;
+        }
     }
-}
 
-// تشغيل تبويب الصيانة عند البدء
-showTab('p2', document.querySelectorAll('.nav-item')[1]);
+    // وظائف الحفظ
+    function saveVehicle() {
+        carData = {
+            type: document.getElementById('v_type').value,
+            model: document.getElementById('v_model').value,
+            year: document.getElementById('v_year').value,
+            plate: document.getElementById('v_plate').value
+        };
+        localStorage.setItem('carProfile', JSON.stringify(carData));
+        alert("تم حفظ بيانات السيارة!");
+    }
+
+    function saveMaintenance() {
+        let log = {
+            type: document.getElementById('m_type').value,
+            price: document.getElementById('m_price').value,
+            km: document.getElementById('m_km').value,
+            date: document.getElementById('m_date').value
+        };
+        maintenanceLogs.push(log);
+        localStorage.setItem('maintenanceLogs', JSON.stringify(maintenanceLogs));
+        alert("تم حفظ عملية الصيانة!");
+        showTab('p5');
+    }
+
+    function saveOdometer() {
+        let entry = { val: document.getElementById('odo_val').value, date: new Date().toLocaleDateString() };
+        odometerLogs.push(entry);
+        localStorage.setItem('odometerLogs', JSON.stringify(odometerLogs));
+        alert("تم تحديث العداد!");
+    }
+
+    function clearLogs() {
+        if(confirm("هل أنت متأكد من مسح جميع السجلات؟")) {
+            localStorage.removeItem('maintenanceLogs');
+            maintenanceLogs = [];
+            showTab('p5');
+        }
+    }
+
+    // التشغيل الافتراضي
+    showTab('p2');
 </script>
 </body>
 </html>

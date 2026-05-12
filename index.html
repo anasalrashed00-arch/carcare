@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة سياراتي - نسخة الجوال الكاملة</title>
+    <title>إدارة سياراتي - النسخة المتكاملة</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -17,29 +17,16 @@
         }
 
         * { box-sizing: border-box; }
-        body {
-            margin: 0; padding: 0;
-            background-color: var(--bg-site);
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            display: flex; height: 100vh;
-            flex-direction: row; color: var(--text-main);
-        }
+        body { margin: 0; padding: 0; background-color: var(--bg-site); font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; color: var(--text-main); }
 
-        /* القائمة الجانبية (كمبيوتر) */
+        /* Navigation */
         .sidebar { width: 260px; background: var(--sidebar-bg); display: flex; flex-direction: column; padding: 20px 0; border-left: 1px solid #334155; }
-        .sidebar h2 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 22px; }
+        .sidebar h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
         .nav-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: var(--text-muted); transition: 0.3s; }
         .nav-item.active { background: #334155; border-right: 4px solid var(--primary); color: var(--primary); }
         
-        /* القائمة السفلية (جوال) - تم إضافة الإحصائيات هنا */
-        .bottom-nav { 
-            display: none; 
-            position: fixed; bottom: 0; width: 100%; 
-            background: var(--sidebar-bg); justify-content: space-around; 
-            padding: 10px 0; border-top: 1px solid #334155; z-index: 1000; 
-        }
-        .bottom-nav div { font-size: 18px; cursor: pointer; color: var(--text-muted); text-align: center; display: flex; flex-direction: column; gap: 4px; }
-        .bottom-nav div span { font-size: 10px; }
+        .bottom-nav { display: none; position: fixed; bottom: 0; width: 100%; background: var(--sidebar-bg); justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; z-index: 1000; }
+        .bottom-nav div { font-size: 18px; color: var(--text-muted); text-align: center; display: flex; flex-direction: column; }
         .bottom-nav div.active { color: var(--primary); }
 
         .main-content { flex: 1; padding: 30px; overflow-y: auto; width: 100%; }
@@ -49,9 +36,9 @@
         .full-width { grid-column: span 2; }
         .input-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 13px; color: var(--text-muted); }
-        input, select { padding: 12px; border: 1px solid #475569; border-radius: 8px; background: var(--input-bg); color: white; outline: none; width: 100%; }
+        input, select { padding: 12px; border: 1px solid #475569; border-radius: 8px; background: var(--input-bg); color: white; outline: none; }
         
-        .btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
+        .btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
         .btn-save { background: var(--primary); color: #0f172a; margin-top: 10px; }
         .btn-excel { background: #10b981; color: white; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
@@ -63,12 +50,9 @@
         th { color: var(--primary); }
 
         @media (max-width: 768px) {
-            .sidebar { display: none; } 
-            .bottom-nav { display: flex; }
-            body { flex-direction: column; } 
-            .main-content { padding: 15px 15px 100px; }
-            .grid-inputs { grid-template-columns: 1fr; } 
-            .full-width { grid-column: span 1; }
+            .sidebar { display: none; } .bottom-nav { display: flex; }
+            body { flex-direction: column; } .main-content { padding: 15px 15px 100px; }
+            .grid-inputs { grid-template-columns: 1fr; } .full-width { grid-column: span 1; }
         }
     </style>
 </head>
@@ -122,13 +106,39 @@
                 <div class="input-group full-width"><label>رقم الهيكل (VIN)</label><input type="text" id="v_vin" value="${carData.vin}"></div>
                 <button class="btn btn-save full-width" onclick="saveVehicle()">حفظ البيانات</button></div>`;
         } 
-        else if(tabId === 'p2') {
-            title.innerText = "إضافة صيانة";
+        else if(tabId === 'p6') {
+            title.innerText = "استهلاك الوقود";
             area.innerHTML = `<div class="grid-inputs">
-                <div class="input-group"><label>نوع الصيانة</label><input type="text" id="m_type"></div>
-                <div class="input-group"><label>التكلفة</label><input type="number" id="m_price"></div>
-                <div class="input-group full-width"><label>التاريخ</label><input type="date" id="m_date"></div>
-                <button class="btn btn-save full-width" onclick="saveMaintenance()">حفظ</button></div>`;
+                <div class="input-group"><label>نوع الوقود</label><select id="f_type"><option>بنزين 91</option><option>بنزين 95</option><option>ديزل</option></select></div>
+                <div class="input-group"><label>عدد الليترات</label><input type="number" id="f_liters" step="0.01"></div>
+                <div class="input-group"><label>المبلغ المدفوع (ريال)</label><input type="number" id="f_price" step="0.01"></div>
+                <div class="input-group"><label>التاريخ</label><input type="date" id="f_date"></div>
+                <button class="btn btn-save full-width" onclick="saveFuel()">تسجيل التعبئة</button></div>`;
+            document.getElementById('f_date').valueAsDate = new Date();
+        }
+        else if(tabId === 'p4') {
+            title.innerText = "الإحصائيات";
+            let totalM = maintenanceLogs.reduce((s,i)=>s+parseFloat(i.price||0),0);
+            let totalF_Money = fuelLogs.reduce((s,i)=>s+parseFloat(i.price||0),0);
+            let totalF_Liters = fuelLogs.reduce((s,i)=>s+parseFloat(i.liters||0),0);
+            area.innerHTML = `<div class="grid-inputs">
+                <div class="stat-card">مصاريف الصيانة<span>${totalM} ريال</span></div>
+                <div class="stat-card">مصاريف الوقود<span>${totalF_Money} ريال</span></div>
+                <div class="stat-card">إجمالي الليترات<span>${totalF_Liters.toFixed(2)} L</span></div>
+                <div class="stat-card">الإجمالي العام<span>${totalM + totalF_Money} ريال</span></div>
+                </div>`;
+        }
+        else if(tabId === 'p5') {
+            title.innerText = "السجل العام";
+            let rows = [...maintenanceLogs.map(i=>({...i, tag:'صيانة'})), ...fuelLogs.map(i=>({...i, tag:'وقود', displayPrice: i.price + ' ريال (' + i.liters + 'L)'}))];
+            rows.sort((a,b) => new Date(b.date) - new Date(a.date));
+            area.innerHTML = `<button class="btn btn-excel" onclick="exportToExcel()">📊 تصدير Excel</button>
+                <table><thead><tr><th>التاريخ</th><th>البيان</th><th>التكلفة/الكمية</th></tr></thead>
+                <tbody>${rows.map(r=>`<tr><td>${r.date}</td><td>${r.tag}: ${r.type}</td><td>${r.tag==='وقود'? r.displayPrice : r.price + ' ريال'}</td></tr>`).join('') || '<tr><td colspan="3">لا يوجد سجلات</td></tr>'}</tbody></table>`;
+        }
+        else if(tabId === 'p2') { 
+            title.innerText = "إضافة صيانة"; 
+            area.innerHTML = `<div class="grid-inputs"><div class="input-group"><label>نوع الصيانة</label><input type="text" id="m_type"></div><div class="input-group"><label>المبلغ</label><input type="number" id="m_price"></div><div class="input-group full-width"><label>التاريخ</label><input type="date" id="m_date"></div><button class="btn btn-save full-width" onclick="saveMaintenance()">حفظ</button></div>`;
             document.getElementById('m_date').valueAsDate = new Date();
         }
         else if(tabId === 'p3') {
@@ -136,33 +146,6 @@
             area.innerHTML = `<div style="text-align:center; padding:20px; background:#000; border-radius:10px; margin-bottom:20px;">
                 <div style="font-size:35px; color:var(--primary); font-family:monospace;">${currentOdo.padStart(6,'0')} KM</div>
                 </div><input type="number" id="odo_input" placeholder="القراءة الجديدة"><button class="btn btn-save" onclick="saveOdo()" style="margin-top:10px;">تحديث</button>`;
-        }
-        else if(tabId === 'p6') {
-            title.innerText = "استهلاك الوقود";
-            area.innerHTML = `<div class="grid-inputs">
-                <div class="input-group"><label>نوع الوقود</label><select id="f_type"><option>بنزين 91</option><option>بنزين 95</option><option>ديزل</option></select></div>
-                <div class="input-group"><label>عدد الليترات</label><input type="number" id="f_liters"></div>
-                <div class="input-group full-width"><label>التاريخ</label><input type="date" id="f_date"></div>
-                <button class="btn btn-save full-width" onclick="saveFuel()">تسجيل</button></div>`;
-            document.getElementById('f_date').valueAsDate = new Date();
-        }
-        else if(tabId === 'p4') {
-            title.innerText = "الإحصائيات";
-            let totalM = maintenanceLogs.reduce((s,i)=>s+parseFloat(i.price||0),0);
-            let totalF = fuelLogs.reduce((s,i)=>s+parseFloat(i.liters||0),0);
-            area.innerHTML = `<div class="grid-inputs">
-                <div class="stat-card">إجمالي الصيانة<span>${totalM} ريال</span></div>
-                <div class="stat-card">إجمالي الوقود<span>${totalF} L</span></div>
-                <div class="stat-card full-width">عدد العمليات المسجلة<span>${maintenanceLogs.length + fuelLogs.length}</span></div>
-                </div>`;
-        }
-        else if(tabId === 'p5') {
-            title.innerText = "السجل العام";
-            let rows = [...maintenanceLogs.map(i=>({...i, tag:'صيانة'})), ...fuelLogs.map(i=>({...i, tag:'وقود', price: i.liters + ' L'}))];
-            rows.sort((a,b) => new Date(b.date) - new Date(a.date));
-            area.innerHTML = `<button class="btn btn-excel" onclick="exportToExcel()">📊 تصدير Excel</button>
-                <table><thead><tr><th>التاريخ</th><th>البيان</th><th>القيمة</th></tr></thead>
-                <tbody>${rows.map(r=>`<tr><td>${r.date}</td><td>${r.tag}: ${r.type}</td><td>${r.price}</td></tr>`).join('') || '<tr><td colspan="3">لا يوجد بيانات</td></tr>'}</tbody></table>`;
         }
     }
 
@@ -172,16 +155,23 @@
         alert("تم الحفظ!");
     }
 
+    function saveFuel() {
+        fuelLogs.push({ 
+            type: document.getElementById('f_type').value, 
+            liters: document.getElementById('f_liters').value, 
+            price: document.getElementById('f_price').value, 
+            date: document.getElementById('f_date').value 
+        });
+        localStorage.setItem('fuelLogs', JSON.stringify(fuelLogs));
+        alert("تم تسجيل الوقود!");
+        showTab('p4');
+    }
+
     function saveMaintenance() {
         maintenanceLogs.push({ type: document.getElementById('m_type').value, price: document.getElementById('m_price').value, date: document.getElementById('m_date').value });
         localStorage.setItem('maintenanceLogs', JSON.stringify(maintenanceLogs));
+        alert("تم تسجيل الصيانة!");
         showTab('p5');
-    }
-
-    function saveFuel() {
-        fuelLogs.push({ type: document.getElementById('f_type').value, liters: document.getElementById('f_liters').value, date: document.getElementById('f_date').value });
-        localStorage.setItem('fuelLogs', JSON.stringify(fuelLogs));
-        showTab('p4');
     }
 
     function saveOdo() {
@@ -190,12 +180,12 @@
     }
 
     function exportToExcel() {
-        let data = maintenanceLogs.map(i => ({ "التاريخ": i.date, "النوع": "صيانة", "التفاصيل": i.type, "القيمة": i.price + " ريال" }));
-        fuelLogs.forEach(i => data.push({ "التاريخ": i.date, "النوع": "وقود", "التفاصيل": i.type, "القيمة": i.liters + " L" }));
+        let data = maintenanceLogs.map(i => ({ "التاريخ": i.date, "النوع": "صيانة", "التفاصيل": i.type, "التكلفة": i.price + " ريال" }));
+        fuelLogs.forEach(i => data.push({ "التاريخ": i.date, "النوع": "وقود", "التفاصيل": i.type, "الليترات": i.liters + " L", "المبلغ": i.price + " ريال" }));
         const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "سجل السيارة");
-        XLSX.writeFile(wb, "Car_Log.xlsx");
+        XLSX.writeFile(wb, "Car_Log_Full.xlsx");
     }
 
     showTab('p1');

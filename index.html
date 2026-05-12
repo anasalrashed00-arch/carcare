@@ -24,7 +24,7 @@
             flex-direction: row;
         }
 
-        /* Sidebar - يختفي في الجوال */
+        /* Sidebar */
         .sidebar {
             width: 260px; background: var(--sidebar-bg);
             color: white; display: flex; flex-direction: column; padding: 20px 0;
@@ -44,7 +44,7 @@
             background: #334155; border-right: 4px solid var(--primary); color: #38bdf8;
         }
 
-        /* Bottom Nav - يظهر فقط في الجوال */
+        /* Bottom Nav (Mobile) */
         .bottom-nav {
             display: none;
             position: fixed; bottom: 0; width: 100%;
@@ -53,7 +53,6 @@
             z-index: 1000;
         }
 
-        /* Main Area */
         .main-content { flex: 1; padding: 40px; overflow-y: auto; width: 100%; }
 
         .form-container {
@@ -85,24 +84,19 @@
             cursor: pointer; margin-top: 20px; width: 100%;
         }
 
-        /* استعلامات الوسائط للجوال (Media Queries) */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar { display: none; } /* إخفاء القائمة الجانبية */
-            .bottom-nav { display: flex; } /* إظهار القائمة السفلية */
+            .sidebar { display: none; }
+            .bottom-nav { display: flex; }
             .main-content { padding: 20px; padding-bottom: 80px; }
-            .grid-inputs { grid-template-columns: 1fr; } /* الخانات تحت بعض */
-            .full-width { grid-column: span 1; }
-            .section-title { grid-column: span 1; }
-            .form-container { padding: 20px; }
+            .grid-inputs { grid-template-columns: 1fr; }
+            .full-width, .section-title { grid-column: span 1; }
             h1 { font-size: 20px; text-align: center; }
         }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: right; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: right; }
         th { background: #f8fafc; color: #64748b; }
-        
-        /* جعل الجدول قابل للتمرير في الجوال */
         .table-wrapper { overflow-x: auto; width: 100%; }
 
         .stat-box {
@@ -136,11 +130,12 @@
 </nav>
 
 <script>
+    // تهيئة البيانات
     let carData = JSON.parse(localStorage.getItem('carProfile')) || { type: '', model: '', year: '', plate: '' };
     let maintenanceLogs = JSON.parse(localStorage.getItem('maintenanceLogs')) || [];
+    let currentOdo = localStorage.getItem('lastOdometer') || '0';
 
     function showTab(tabId) {
-        // تحديث الحالة النشطة (للجانبية والسفلية)
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         const sideBtn = document.getElementById('side-' + tabId);
         if(sideBtn) sideBtn.classList.add('active');
@@ -163,45 +158,82 @@
             title.innerText = "إضافة صيانة";
             area.innerHTML = `
                 <div class="grid-inputs">
-                    <div class="input-group"><label>نوع الصيانة</label><input type="text" id="m_type"></div>
+                    <div class="input-group"><label>نوع الصيانة</label><input type="text" id="m_type" placeholder="مثلاً: فحمات"></div>
                     <div class="input-group"><label>المبلغ</label><input type="number" id="m_price"></div>
-                    <div class="input-group"><label>الممشى</label><input type="number" id="m_km"></div>
+                    <div class="input-group"><label>الممشى عند الصيانة</label><input type="number" id="m_km"></div>
                     <div class="input-group"><label>التاريخ</label><input type="date" id="m_date"></div>
-                    <button class="btn-save" onclick="saveMaintenance()">حفظ</button>
+                    <button class="btn-save" onclick="saveMaintenance()">حفظ في السجل</button>
                 </div>`;
             document.getElementById('m_date').valueAsDate = new Date();
         }
         else if(tabId === 'p3') {
-            title.innerText = "العداد";
-            area.innerHTML = `<div class="grid-inputs"><div class="input-group"><label>القراءة الحالية</label><input type="number" id="odo_val"></div><button class="btn-save">تحديث</button></div>`;
+            title.innerText = "تحديث قراءة العداد";
+            area.innerHTML = `
+                <div class="grid-inputs">
+                    <div class="stat-box full-width"><h3>القراءة الحالية</h3><p style="font-size:24px; color:var(--primary);">${currentOdo} كم</p></div>
+                    <div class="input-group full-width"><label>أدخل القراءة الجديدة</label><input type="number" id="odo_input" placeholder="كم"></div>
+                    <button class="btn-save full-width" onclick="saveOdo()">تحديث العداد</button>
+                </div>`;
         }
         else if(tabId === 'p4') {
             title.innerText = "الإحصائيات";
             let total = maintenanceLogs.reduce((sum, item) => sum + parseFloat(item.price || 0), 0);
-            area.innerHTML = `<div class="stat-box"><h3>الإجمالي</h3><p>${total} ريال</p></div><div class="stat-box"><h3>العمليات</h3><p>${maintenanceLogs.length}</p></div>`;
+            area.innerHTML = `
+                <div class="grid-inputs">
+                    <div class="stat-box"><h3>إجمالي التكاليف</h3><p>${total} ريال</p></div>
+                    <div class="stat-box"><h3>عدد الصيانات</h3><p>${maintenanceLogs.length}</p></div>
+                </div>`;
         }
         else if(tabId === 'p5') {
-            title.innerText = "السجل";
-            let rows = maintenanceLogs.map(item => `<tr><td>${item.date}</td><td>${item.type}</td><td>${item.price}</td></tr>`).reverse().join('');
-            area.innerHTML = `<div class="table-wrapper"><table><thead><tr><th>التاريخ</th><th>النوع</th><th>السعر</th></tr></thead><tbody>${rows || '<tr><td colspan="3">لا يوجد</td></tr>'}</tbody></table></div>`;
+            title.innerText = "سجل الصيانة";
+            let rows = maintenanceLogs.map(item => `<tr><td>${item.date}</td><td>${item.type}</td><td>${item.price} ر.س</td></tr>`).reverse().join('');
+            area.innerHTML = `
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>التاريخ</th><th>النوع</th><th>السعر</th></tr></thead>
+                        <tbody>${rows || '<tr><td colspan="3" style="text-align:center;">لا يوجد سجلات</td></tr>'}</tbody>
+                    </table>
+                </div>
+                ${maintenanceLogs.length > 0 ? '<button onclick="clearLogs()" style="background:#e74c3c; color:white; border:none; padding:10px; margin-top:20px; border-radius:8px; cursor:pointer; width:100%;">مسح السجل</button>' : ''}`;
         }
     }
 
+    // وظائف الحفظ
     function saveVehicle() {
         carData = { type: document.getElementById('v_type').value, model: document.getElementById('v_model').value, year: document.getElementById('v_year').value, plate: document.getElementById('v_plate').value };
         localStorage.setItem('carProfile', JSON.stringify(carData));
-        alert("تم الحفظ!");
+        alert("تم حفظ بيانات السيارة!");
     }
 
     function saveMaintenance() {
         let log = { type: document.getElementById('m_type').value, price: document.getElementById('m_price').value, km: document.getElementById('m_km').value, date: document.getElementById('m_date').value };
         maintenanceLogs.push(log);
         localStorage.setItem('maintenanceLogs', JSON.stringify(maintenanceLogs));
-        alert("تم الحفظ!");
+        alert("تمت إضافة الصيانة للسجل!");
         showTab('p5');
     }
 
-    // التشغيل الافتراضي
+    function saveOdo() {
+        let val = document.getElementById('odo_input').value;
+        if(val) {
+            currentOdo = val;
+            localStorage.setItem('lastOdometer', val);
+            alert("تم تحديث قراءة العداد!");
+            showTab('p3');
+        } else {
+            alert("يرجى إدخال القراءة");
+        }
+    }
+
+    function clearLogs() {
+        if(confirm("هل تريد مسح السجل بالكامل؟")) {
+            localStorage.removeItem('maintenanceLogs');
+            maintenanceLogs = [];
+            showTab('p5');
+        }
+    }
+
+    // البدء ببيانات المركبة
     showTab('p1');
 </script>
 </body>

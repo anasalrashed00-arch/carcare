@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة سياراتي - النسخة المتقدمة</title>
-    <!-- مكتبة لتصدير ملفات Excel -->
+    <title>إدارة سياراتي - نسخة الجوال الكاملة</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -26,17 +25,23 @@
             flex-direction: row; color: var(--text-main);
         }
 
-        /* Sidebar & Navigation */
+        /* القائمة الجانبية (كمبيوتر) */
         .sidebar { width: 260px; background: var(--sidebar-bg); display: flex; flex-direction: column; padding: 20px 0; border-left: 1px solid #334155; }
         .sidebar h2 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 22px; }
-        .nav-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: var(--text-muted); transition: 0.3s; font-size: 15px; }
+        .nav-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: var(--text-muted); transition: 0.3s; }
         .nav-item.active { background: #334155; border-right: 4px solid var(--primary); color: var(--primary); }
         
-        .bottom-nav { display: none; position: fixed; bottom: 0; width: 100%; background: var(--sidebar-bg); justify-content: space-around; padding: 12px 0; border-top: 1px solid #334155; z-index: 1000; }
-        .bottom-nav div { font-size: 20px; opacity: 0.6; color: white; }
-        .bottom-nav div.active { color: var(--primary); opacity: 1; }
+        /* القائمة السفلية (جوال) - تم إضافة الإحصائيات هنا */
+        .bottom-nav { 
+            display: none; 
+            position: fixed; bottom: 0; width: 100%; 
+            background: var(--sidebar-bg); justify-content: space-around; 
+            padding: 10px 0; border-top: 1px solid #334155; z-index: 1000; 
+        }
+        .bottom-nav div { font-size: 18px; cursor: pointer; color: var(--text-muted); text-align: center; display: flex; flex-direction: column; gap: 4px; }
+        .bottom-nav div span { font-size: 10px; }
+        .bottom-nav div.active { color: var(--primary); }
 
-        /* Main Content */
         .main-content { flex: 1; padding: 30px; overflow-y: auto; width: 100%; }
         .form-container { background: var(--card-bg); padding: 25px; border-radius: 15px; border: 1px solid #334155; max-width: 900px; margin: 0 auto; }
         
@@ -44,23 +49,26 @@
         .full-width { grid-column: span 2; }
         .input-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 13px; color: var(--text-muted); }
-        input, select { padding: 12px; border: 1px solid #475569; border-radius: 8px; background: var(--input-bg); color: white; outline: none; }
+        input, select { padding: 12px; border: 1px solid #475569; border-radius: 8px; background: var(--input-bg); color: white; outline: none; width: 100%; }
         
-        .btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px; }
-        .btn-save { background: var(--primary); color: #0f172a; width: 100%; margin-top: 10px; }
-        .btn-excel { background: #10b981; color: white; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 8px; }
+        .btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; }
+        .btn-save { background: var(--primary); color: #0f172a; margin-top: 10px; }
+        .btn-excel { background: #10b981; color: white; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* Stats & Tables */
         .stat-card { background: rgba(251, 191, 36, 0.1); border: 1px solid var(--primary); padding: 15px; border-radius: 10px; text-align: center; }
         .stat-card span { display: block; font-size: 24px; font-weight: bold; color: var(--primary); }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #475569; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #475569; font-size: 14px; }
         th { color: var(--primary); }
 
         @media (max-width: 768px) {
-            .sidebar { display: none; } .bottom-nav { display: flex; }
-            body { flex-direction: column; } .main-content { padding: 15px 15px 100px; }
-            .grid-inputs { grid-template-columns: 1fr; } .full-width { grid-column: span 1; }
+            .sidebar { display: none; } 
+            .bottom-nav { display: flex; }
+            body { flex-direction: column; } 
+            .main-content { padding: 15px 15px 100px; }
+            .grid-inputs { grid-template-columns: 1fr; } 
+            .full-width { grid-column: span 1; }
         }
     </style>
 </head>
@@ -68,12 +76,12 @@
 
 <aside class="sidebar">
     <h2>إدارة سياراتي</h2>
-    <div class="nav-item" id="side-p1" onclick="showTab('p1')"><span>🚗</span> المركبة</div>
+    <div class="nav-item active" id="side-p1" onclick="showTab('p1')"><span>🚗</span> المركبة</div>
     <div class="nav-item" id="side-p2" onclick="showTab('p2')"><span>🔧</span> الصيانة</div>
     <div class="nav-item" id="side-p3" onclick="showTab('p3')"><span>📟</span> العداد</div>
-    <div class="nav-item" id="side-p6" onclick="showTab('p6')"><span>⛽</span> استهلاك الوقود</div>
+    <div class="nav-item" id="side-p6" onclick="showTab('p6')"><span>⛽</span> الوقود</div>
     <div class="nav-item" id="side-p4" onclick="showTab('p4')"><span>📊</span> الإحصائيات</div>
-    <div class="nav-item" id="side-p5" onclick="showTab('p5')"><span>🗂️</span> السجل العام</div>
+    <div class="nav-item" id="side-p5" onclick="showTab('p5')"><span>🗂️</span> السجل</div>
 </aside>
 
 <main class="main-content">
@@ -82,15 +90,15 @@
 </main>
 
 <nav class="bottom-nav">
-    <div id="bot-p1" onclick="showTab('p1')">🚗</div>
-    <div id="bot-p2" onclick="showTab('p2')">🔧</div>
-    <div id="bot-p3" onclick="showTab('p3')">📟</div>
-    <div id="bot-p6" onclick="showTab('p6')">⛽</div>
-    <div id="bot-p5" onclick="showTab('p5')">🗂️</div>
+    <div id="bot-p1" onclick="showTab('p1')">🚗<span>المركبة</span></div>
+    <div id="bot-p2" onclick="showTab('p2')">🔧<span>صيانة</span></div>
+    <div id="bot-p3" onclick="showTab('p3')">📟<span>عداد</span></div>
+    <div id="bot-p6" onclick="showTab('p6')">⛽<span>وقود</span></div>
+    <div id="bot-p4" onclick="showTab('p4')">📊<span>إحصاء</span></div>
+    <div id="bot-p5" onclick="showTab('p5')">🗂️<span>سجل</span></div>
 </nav>
 
 <script>
-    // تهيئة البيانات
     let carData = JSON.parse(localStorage.getItem('carProfile')) || { type: '', model: '', year: '', plate: '', vin: '' };
     let maintenanceLogs = JSON.parse(localStorage.getItem('maintenanceLogs')) || [];
     let fuelLogs = JSON.parse(localStorage.getItem('fuelLogs')) || [];
@@ -104,91 +112,76 @@
         const area = document.getElementById('content-area');
         const title = document.getElementById('view-title');
 
-        switch(tabId) {
-            case 'p1':
-                title.innerText = "بيانات المركبة";
-                area.innerHTML = `<div class="grid-inputs">
-                    <div class="input-group"><label>نوع المركبة</label><input type="text" id="v_type" value="${carData.type}"></div>
-                    <div class="input-group"><label>الموديل</label><input type="text" id="v_model" value="${carData.model}"></div>
-                    <div class="input-group"><label>السنة</label><input type="number" id="v_year" value="${carData.year}"></div>
-                    <div class="input-group"><label>رقم اللوحة</label><input type="text" id="v_plate" value="${carData.plate}"></div>
-                    <div class="input-group full-width"><label>رقم الهيكل (VIN)</label><input type="text" id="v_vin" value="${carData.vin}" placeholder="أدخل رقم الهيكل المكون من 17 رمز"></div>
-                    <button class="btn btn-save full-width" onclick="saveVehicle()">حفظ البيانات</button>
+        if(tabId === 'p1') {
+            title.innerText = "بيانات المركبة";
+            area.innerHTML = `<div class="grid-inputs">
+                <div class="input-group"><label>نوع المركبة</label><input type="text" id="v_type" value="${carData.type}"></div>
+                <div class="input-group"><label>الموديل</label><input type="text" id="v_model" value="${carData.model}"></div>
+                <div class="input-group"><label>السنة</label><input type="number" id="v_year" value="${carData.year}"></div>
+                <div class="input-group"><label>رقم اللوحة</label><input type="text" id="v_plate" value="${carData.plate}"></div>
+                <div class="input-group full-width"><label>رقم الهيكل (VIN)</label><input type="text" id="v_vin" value="${carData.vin}"></div>
+                <button class="btn btn-save full-width" onclick="saveVehicle()">حفظ البيانات</button></div>`;
+        } 
+        else if(tabId === 'p2') {
+            title.innerText = "إضافة صيانة";
+            area.innerHTML = `<div class="grid-inputs">
+                <div class="input-group"><label>نوع الصيانة</label><input type="text" id="m_type"></div>
+                <div class="input-group"><label>التكلفة</label><input type="number" id="m_price"></div>
+                <div class="input-group full-width"><label>التاريخ</label><input type="date" id="m_date"></div>
+                <button class="btn btn-save full-width" onclick="saveMaintenance()">حفظ</button></div>`;
+            document.getElementById('m_date').valueAsDate = new Date();
+        }
+        else if(tabId === 'p3') {
+            title.innerText = "العداد";
+            area.innerHTML = `<div style="text-align:center; padding:20px; background:#000; border-radius:10px; margin-bottom:20px;">
+                <div style="font-size:35px; color:var(--primary); font-family:monospace;">${currentOdo.padStart(6,'0')} KM</div>
+                </div><input type="number" id="odo_input" placeholder="القراءة الجديدة"><button class="btn btn-save" onclick="saveOdo()" style="margin-top:10px;">تحديث</button>`;
+        }
+        else if(tabId === 'p6') {
+            title.innerText = "استهلاك الوقود";
+            area.innerHTML = `<div class="grid-inputs">
+                <div class="input-group"><label>نوع الوقود</label><select id="f_type"><option>بنزين 91</option><option>بنزين 95</option><option>ديزل</option></select></div>
+                <div class="input-group"><label>عدد الليترات</label><input type="number" id="f_liters"></div>
+                <div class="input-group full-width"><label>التاريخ</label><input type="date" id="f_date"></div>
+                <button class="btn btn-save full-width" onclick="saveFuel()">تسجيل</button></div>`;
+            document.getElementById('f_date').valueAsDate = new Date();
+        }
+        else if(tabId === 'p4') {
+            title.innerText = "الإحصائيات";
+            let totalM = maintenanceLogs.reduce((s,i)=>s+parseFloat(i.price||0),0);
+            let totalF = fuelLogs.reduce((s,i)=>s+parseFloat(i.liters||0),0);
+            area.innerHTML = `<div class="grid-inputs">
+                <div class="stat-card">إجمالي الصيانة<span>${totalM} ريال</span></div>
+                <div class="stat-card">إجمالي الوقود<span>${totalF} L</span></div>
+                <div class="stat-card full-width">عدد العمليات المسجلة<span>${maintenanceLogs.length + fuelLogs.length}</span></div>
                 </div>`;
-                break;
-
-            case 'p6':
-                title.innerText = "استهلاك الوقود";
-                let fuelTotal = fuelLogs.reduce((s, i) => s + parseFloat(i.liters || 0), 0);
-                area.innerHTML = `
-                    <div class="grid-inputs" style="margin-bottom:20px;">
-                        <div class="stat-card">إجمالي الليترات <span>${fuelTotal.toFixed(1)} L</span></div>
-                        <div class="stat-card">مرات التعبئة <span>${fuelLogs.length}</span></div>
-                    </div>
-                    <div class="grid-inputs">
-                        <div class="input-group"><label>نوع الوقود</label>
-                            <select id="f_type"><option>بنزين 91</option><option>بنزين 95</option><option>ديزل</option></select>
-                        </div>
-                        <div class="input-group"><label>عدد الليترات</label><input type="number" id="f_liters"></div>
-                        <div class="input-group full-width"><label>تاريخ التعبئة</label><input type="date" id="f_date"></div>
-                        <button class="btn btn-save full-width" onclick="saveFuel()">تسجيل التعبئة</button>
-                    </div>
-                    <h3 style="margin-top:25px; color:var(--primary);">سجل الوقود</h3>
-                    <table><thead><tr><th>التاريخ</th><th>النوع</th><th>الليترات</th></tr></thead>
-                    <tbody>${fuelLogs.map(i => `<tr><td>${i.date}</td><td>${i.type}</td><td>${i.liters} L</td></tr>`).reverse().join('') || '<tr><td colspan="3">لا يوجد سجل</td></tr>'}</tbody></table>`;
-                document.getElementById('f_date').valueAsDate = new Date();
-                break;
-
-            case 'p5':
-                title.innerText = "السجل العام";
-                area.innerHTML = `
-                    <button class="btn btn-excel" onclick="exportToExcel()">📊 تصدير السجل إلى Excel</button>
-                    <table><thead><tr><th>التاريخ</th><th>البيان</th><th>التكلفة/الكمية</th></tr></thead>
-                    <tbody>
-                        ${maintenanceLogs.map(i => `<tr style="border-right: 3px solid #fbbf24;"><td>${i.date}</td><td>صيانة: ${i.type}</td><td>${i.price} ريال</td></tr>`).join('')}
-                        ${fuelLogs.map(i => `<tr style="border-right: 3px solid #10b981;"><td>${i.date}</td><td>وقود: ${i.type}</td><td>${i.liters} L</td></tr>`).join('')}
-                    </tbody></table>`;
-                break;
-            
-            // باقي التبويبات (صيانة، عداد، إحصائيات) يتم استدعاؤها بنفس المنطق السابق...
-            default:
-                area.innerHTML = `<p style="text-align:center; color:var(--text-muted);">جاري تحميل القسم...</p>`;
-                if(tabId === 'p2') { 
-                    title.innerText = "إضافة صيانة"; 
-                    area.innerHTML = `<div class="grid-inputs"><div class="input-group"><label>نوع الصيانة</label><input type="text" id="m_type"></div><div class="input-group"><label>المبلغ</label><input type="number" id="m_price"></div><div class="input-group full-width"><label>التاريخ</label><input type="date" id="m_date"></div><button class="btn btn-save full-width" onclick="saveMaintenance()">حفظ</button></div>`;
-                    document.getElementById('m_date').valueAsDate = new Date();
-                }
-                if(tabId === 'p3') {
-                    title.innerText = "العداد";
-                    area.innerHTML = `<div style="text-align:center; padding:20px; background:#000; border-radius:10px; margin-bottom:20px;"><div style="font-size:40px; color:var(--primary); font-family:monospace;">${currentOdo.padStart(6,'0')} KM</div></div><input type="number" id="odo_input" placeholder="القراءة الجديدة" style="width:100%; margin-bottom:10px;"><button class="btn btn-save" onclick="saveOdo()">تحديث</button>`;
-                }
-                if(tabId === 'p4') {
-                    title.innerText = "الإحصائيات";
-                    let totalM = maintenanceLogs.reduce((s,i)=>s+parseFloat(i.price||0),0);
-                    area.innerHTML = `<div class="grid-inputs"><div class="stat-card">مصاريف الصيانة<span>${totalM} ريال</span></div><div class="stat-card">استهلاك الوقود<span>${fuelLogs.reduce((s,i)=>s+parseFloat(i.liters||0),0)} L</span></div></div>`;
-                }
+        }
+        else if(tabId === 'p5') {
+            title.innerText = "السجل العام";
+            let rows = [...maintenanceLogs.map(i=>({...i, tag:'صيانة'})), ...fuelLogs.map(i=>({...i, tag:'وقود', price: i.liters + ' L'}))];
+            rows.sort((a,b) => new Date(b.date) - new Date(a.date));
+            area.innerHTML = `<button class="btn btn-excel" onclick="exportToExcel()">📊 تصدير Excel</button>
+                <table><thead><tr><th>التاريخ</th><th>البيان</th><th>القيمة</th></tr></thead>
+                <tbody>${rows.map(r=>`<tr><td>${r.date}</td><td>${r.tag}: ${r.type}</td><td>${r.price}</td></tr>`).join('') || '<tr><td colspan="3">لا يوجد بيانات</td></tr>'}</tbody></table>`;
         }
     }
 
-    // وظائف الحفظ
     function saveVehicle() {
         carData = { type: document.getElementById('v_type').value, model: document.getElementById('v_model').value, year: document.getElementById('v_year').value, plate: document.getElementById('v_plate').value, vin: document.getElementById('v_vin').value };
         localStorage.setItem('carProfile', JSON.stringify(carData));
-        alert("تم حفظ بيانات المركبة بنجاح!");
-    }
-
-    function saveFuel() {
-        let entry = { type: document.getElementById('f_type').value, liters: document.getElementById('f_liters').value, date: document.getElementById('f_date').value };
-        fuelLogs.push(entry);
-        localStorage.setItem('fuelLogs', JSON.stringify(fuelLogs));
-        showTab('p6');
+        alert("تم الحفظ!");
     }
 
     function saveMaintenance() {
-        let log = { type: document.getElementById('m_type').value, price: document.getElementById('m_price').value, date: document.getElementById('m_date').value };
-        maintenanceLogs.push(log);
+        maintenanceLogs.push({ type: document.getElementById('m_type').value, price: document.getElementById('m_price').value, date: document.getElementById('m_date').value });
         localStorage.setItem('maintenanceLogs', JSON.stringify(maintenanceLogs));
         showTab('p5');
+    }
+
+    function saveFuel() {
+        fuelLogs.push({ type: document.getElementById('f_type').value, liters: document.getElementById('f_liters').value, date: document.getElementById('f_date').value });
+        localStorage.setItem('fuelLogs', JSON.stringify(fuelLogs));
+        showTab('p4');
     }
 
     function saveOdo() {
@@ -196,15 +189,13 @@
         if(val) { currentOdo = val; localStorage.setItem('lastOdometer', val); showTab('p3'); }
     }
 
-    // تصدير Excel
     function exportToExcel() {
-        let data = maintenanceLogs.map(i => ({ "التاريخ": i.date, "النوع": "صيانة", "التفاصيل": i.type, "القيمة/الكمية": i.price + " ريال" }));
-        fuelLogs.forEach(i => data.push({ "التاريخ": i.date, "النوع": "وقود", "التفاصيل": i.type, "القيمة/الكمية": i.liters + " L" }));
-        
+        let data = maintenanceLogs.map(i => ({ "التاريخ": i.date, "النوع": "صيانة", "التفاصيل": i.type, "القيمة": i.price + " ريال" }));
+        fuelLogs.forEach(i => data.push({ "التاريخ": i.date, "النوع": "وقود", "التفاصيل": i.type, "القيمة": i.liters + " L" }));
         const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "سجل السيارة");
-        XLSX.writeFile(wb, "سجل_صيانة_السيارة.xlsx");
+        XLSX.writeFile(wb, "Car_Log.xlsx");
     }
 
     showTab('p1');
